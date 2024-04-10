@@ -1,0 +1,103 @@
+1. Részösszegek:
+
+GROUP BY ROLLUP:
+
+    Oszlopneveket és NULL értékeket kombinálva csoportosít.
+    Megjeleníti a részösszegeket és a végösszeget is.
+    A csoportosításkor a nem NULL oszlopok száma jobbról balra csökken.
+
+GROUP BY CUBE:
+
+    Az oszlopneveket és a NULL értékeket kombinálva csoportosít.
+    Megjeleníti a részösszegeket és a végösszeget is.
+    A csoportosításhoz minden lehetséges kombinációt felhasznál.
+
+2. Többféle csoportosítás:
+
+GROUPING SETS:
+
+    A GROUP BY parancs kiegészítése, amely lehetővé teszi, hogy többféle csoportosítást is megadjunk.
+    A csoportosításokat leíró oszlopneveket zárójelek között, vesszővel elválasztva kell megadni.
+
+3. A GROUPING és GROUPING_ID függvények:
+
+GROUPING:
+
+    Értéke 1, ha az adott oszlopkifejezés szerint aggregálás van, különben 0.
+
+GROUPING_ID:
+
+    Értéke a paraméterként megkapott oszlopkifejezések aggregációs szintjének száma.
+
+1. Ablakok:
+
+ROWS:
+
+    Az ablak méretét fizikailag adja meg (legtöbbször az aktuális sort megelőző és/vagy követő sorok számát konkrétan megadja).
+    Kezdőpont, végpont lehet: CURRENT ROW, n PRECEDING, n FOLLOWING.
+    Speciálisan: UNBOUNDED PRECEDING (kezdőpont), UNBOUNDED FOLLOWING (végpont).
+
+RANGE:
+
+    Az ablak méretét logikailag adja meg (nem a sorok számát adja meg, hanem a legelső, legutolsó vagy az aktuális sort, mint az intervallum kezdő- vagy végpontját).
+    Kezdőpont, végpont lehet: CURRENT ROW, UNBOUNDED PRECEDING (kezdőpont) és UNBOUNDED FOLLOWING (végpont).
+
+2. Rangsorolási technikák:
+
+ROW_NUMBER():
+
+    A lekérdezés eredménysoraihoz sorszámokat rendel.
+    A ROW_NUMBER() mindig szigorúan monoton növekvő számokat ad vissza!
+    Több partíció esetén a sorszámozás minden partíciónál újra kezdődik.
+
+RANK():
+
+    Megadja, hogy az adott rekord hányadik a partícióban az adott rendezettség szerint.
+    A RANK() mindig monoton növekvő számokat ad vissza!
+    Az azonos értékű sorok ugyanazt a sorszámot kapják.
+    A következő sorszám az aktuálisnál annyival lesz nagyobb, ahány azonos értékű sor van.
+
+DENSE_RANK():
+
+    Megegyezik a RANK() -kal, de az azonos értékű sorok ugyanazt a sorszámot kapják, a következő sorszám pedig eggyel nagyobb lesz.
+
+3. Előző és következő értékek:
+
+LAG():
+
+    Megadja egy adott sorhoz képest x-sorral korábbi oszlop értékét partíciónként egy adott rendezési szempont szerint.
+    A default érték akkor jelenik meg, ha nincs x sorral korábbi elem.
+    Ha x és default érték elmarad, akkor 1 sorral ugrik vissza.
+
+LEAD():
+
+    Megadja egy adott sorhoz képest x-sorral későbbi oszlop értékét partíciónként egy adott rendezési szempont szerint.
+    Ha x és default érték elmarad, akkor 1 sort lép előre.
+
+4. Első és utolsó értékek:
+
+FIRST_VALUE():
+
+    Megadja egy adott sorrendben lévő csoport (partíció) legelső elemét.
+
+LAST_VALUE():
+
+    Megadja egy adott sorrendben lévő csoport(partíció) legutolsó elemét.
+    Vigyázni kell, mivel futtatáskor a partíció legutolsó eleme alapértelmezés szerint az aktuális sor! Megoldás lehet a RANGE vagy helyette fordított sorrend és FIRST_VALUE().
+
+5. NTILE():
+
+    A partíció elemeit adott számú osztályba sorolja a megadott sorrend alapján.
+
+3. Helyezés:
+
+    SELECT rész: SELECT oszlop1, oszlop2, (subquery), oszlop4
+    FROM rész: SELECT s.oszloplista FROM (subuqery) s
+    WHERE rész: SELECT ... WHERE kifejezés operátor (subquery)
+    HAVING rész: SELECT ... HAVING kifejezés operátor (subquery)
+
+4. Tipikus esetek:
+
+    Összehasonlítás: SELECT ... WHERE kifejezés < (subquery)
+    Benne van: SELECT ... WHERE kifejezés IN (subquery)
+    Üres halmaz: SELECT ... WHERE EXISTS (subquery)
