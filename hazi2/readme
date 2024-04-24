@@ -1,1 +1,40 @@
 Az online felület nme engedte, hogy exportáljam sql formátumban a létrehozott maszkolt adatbázist, emiatt csak csvben tudom feltölteni.
+
+Itt a kód amivel létrehoztam az adatbázist:
+
+CREATE TABLE [dbo].[Ugyfel](
+	[LOGIN] [nvarchar](255) NOT NULL,
+	[EMAIL] [nvarchar](255) MASKED WITH (function = 'email()') NOT NULL,
+	[NEV] [nvarchar](255) MASKED WITH (Function = 'partial(1,"XXX",1)') NOT NULL,
+	[SZULEV] [int] MASKED WITH (Function = 'default()') NULL,
+	[NEM] [nvarchar](1) NULL,
+	[CIM] [nvarchar](255) NULL,
+ CONSTRAINT [PK_Ugyfel] PRIMARY KEY CLUSTERED 
+(
+	[LOGIN] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+#######################################################################################################################################################
+
+insert [#tempUgyfel] ([LOGIN],[EMAIL],[NEV],[SZULEV],[NEM],[CIM])
+select N'adam1',N'ádám.kiss@mail.hu',N'Kiss Ádám',1991,N'F',N'5630 Békés, Szolnoki út 8.' UNION ALL
+select N'adam3',N'adam3@gmail.com',N'Barkóci Ádám',1970,N'F',N'3910 Tokaj, Dózsa György utca 37.' UNION ALL
+select N'adam4',N'ádám.bieniek@mail.hu',N'Bieniek Ádám',1976,N'F',N'8630 Balatonboglár, Juhászföldi út 1.' UNION ALL
+select N'agnes',N'agnes@gmail.com',N'Lengyel Ágnes',1979,N'N',N'5200 Törökszentmiklós, Deák Ferenc út 5.' UNION ALL
+select N'agnes3',N'agnes3@gmail.com',N'Hartyánszky Ágnes',1967,N'N',N'6430 Bácsalmás, Posta köz 2.' UNION ALL
+select N'AGNESH',N'AGNESH@gmail.com',N'Horváth Ágnes',1981,N'N',N'8200 Veszprém, Rákóczi utca 21.' UNION ALL
+select N'AGNESK',N'AGNESK@gmail.com',N'Kovács Ágnes',1988,N'N',N'1084 Budapest, Endrődi Sándor utca 47.' UNION ALL
+select N'akos',N'ákos.bíró@mail.hu',N'Bíró Ákos',1982,N'F',N'9023 Győr, Kossuth Lajos utca 47/b.' UNION ALL
+select N'aladar',N'aladár.dunai@mail.hu',N'Dunai Aladár',1980,N'F',N'5931 Nagyszénás, Árpád utca 23.' UNION ALL
+select N'alexandra',N'alexandra.bagóczki@mail.hu',N'Bagóczki Alexandra',1992,N'N',N'2381 Táborfalva, Petőfi utca 1/2.' UNION ALL
+select N'alexis',N'alexbiro@gmail.com',N'Biró Alexander',2000,N'F',N'6914 Pitvaros, Deák F. u. 38.' UNION ALL
+select N'andi',N'andrea.maródi@mail.hu',N'Maródi Andrea',1968,N'N',N'5465 Cserkeszőlő, Árpád utca 4.' UNION ALL
+select N'andras2',N'andrás.tóth@mail.hu',N'Tóth András',1997,N'F',N'4071 Egyek, Petőfi utca 30.' UNION ALL
+select N'andras21',N'andrás.molnár@mail.hu',N'Molnár András',1977,N'F',N'7900 Szigetvár, Rákóczi utca 67.' UNION ALL
+
+#########################################################################################################################################################
+CREATE USER MaskUser WITHOUT Login;
+GRANT SELECT ON Ugyfel TO MaskUser
+EXECUTE AS User= 'MaskUser';
+SELECT * FROM Ugyfel
